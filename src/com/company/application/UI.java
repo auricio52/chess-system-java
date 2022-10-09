@@ -5,8 +5,11 @@ import com.company.chess.ChessPiece;
 import com.company.chess.ChessPosition;
 import com.company.chess.Color;
 
+import java.util.Arrays;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class UI {
     // https://stackoverflow.com/questions/5762491/how-to-print-color-in-console-using-system-out-println
@@ -51,11 +54,46 @@ public class UI {
         System.out.println("  a b c d e f g h");
     }
 
-    public static void printMatch(ChessMatch chessMatch) {
+    public static void printMatch(ChessMatch chessMatch, List<ChessPiece> capturedPieces) {
         printBoard(chessMatch.getPieces());
         System.out.println();
+        printCapturedPieces(capturedPieces);
+        System.out.println();
+
         System.out.println("Turn: " + chessMatch.getTurn());
         System.out.println("Waiting player: " + chessMatch.getCurrentPlayer());
+    }
+
+    public static ChessPosition readChessPosition(Scanner scanner) {
+        try {
+            String position = scanner.nextLine();
+            char column = position.charAt(0);
+            int row = Integer.parseInt(position.substring(1));
+            return new ChessPosition(column, row);
+        } catch (RuntimeException exception) {
+            throw new InputMismatchException("Error reading ChessPosition. Valid values are from a1 to h8.");
+        }
+    }
+
+    public static void clearScreen() {
+        System.out.println("\033[H\033[2j");
+        System.out.flush();
+    }
+
+    private static void printCapturedPieces(List<ChessPiece> pieces) {
+        List<ChessPiece> whitePieces = pieces.stream().filter((chessPiece -> chessPiece.getColor() == Color.WHITE)).collect(Collectors.toList());
+        List<ChessPiece> blackPieces = pieces.stream().filter((chessPiece -> chessPiece.getColor() == Color.BLACK)).collect(Collectors.toList());
+
+        System.out.println("Captured pieces:");
+        System.out.print("White: ");
+        System.out.print(ANSI_WHITE);
+        System.out.println(Arrays.toString(whitePieces.toArray()));
+        System.out.print(ANSI_RESET);
+
+        System.out.print("Black: ");
+        System.out.print(ANSI_YELLOW);
+        System.out.println(Arrays.toString(blackPieces.toArray()));
+        System.out.print(ANSI_RESET);
     }
 
     private static void printPiece(ChessPiece piece, boolean background) {
@@ -72,21 +110,5 @@ public class UI {
             }
         }
         System.out.print(" ");
-    }
-
-    public static ChessPosition readChessPosition(Scanner scanner) {
-       try {
-           String position = scanner.nextLine();
-           char column = position.charAt(0);
-           int row = Integer.parseInt(position.substring(1));
-           return new ChessPosition(column, row);
-       } catch (RuntimeException exception) {
-           throw new InputMismatchException("Error reading ChessPosition. Valid values are from a1 to h8.");
-       }
-    }
-
-    public static void clearScreen() {
-        System.out.println("\033[H\033[2j");
-        System.out.flush();
     }
 }
