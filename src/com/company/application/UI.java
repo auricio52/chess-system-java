@@ -1,5 +1,6 @@
 package com.company.application;
 
+import com.company.chess.ChessMatch;
 import com.company.chess.ChessPiece;
 import com.company.chess.ChessPosition;
 import com.company.chess.Color;
@@ -48,6 +49,13 @@ public class UI {
             System.out.println();
         }
         System.out.println("  a b c d e f g h");
+    }
+
+    public static void printMatch(ChessMatch chessMatch) {
+        printBoard(chessMatch.getPieces());
+        System.out.println();
+        System.out.println("Turn: " + chessMatch.getTurn());
+        System.out.println("Waiting player: " + chessMatch.getCurrentPlayer());
     }
 
     private static void printPiece(ChessPiece piece, boolean background) {
